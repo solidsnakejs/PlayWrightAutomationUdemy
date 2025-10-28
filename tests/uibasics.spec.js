@@ -41,38 +41,44 @@ test.only('Register, login, obtain first product title [Task]', async ({browser}
     const context = await browser.newContext();
     const page = await context.newPage();
     const loginPage = "https://rahulshettyacademy.com/client/#/auth/login";
+    const userEmail = `testuser${Date.now()}@test.com`;
     const registerLink = page.locator("a.text-reset");
-    const firstNameTextBox = page.locator("#firstName");
-    const lastNameTextBox = page.locator("#lastName");
-    const emailTextBox = page.locator("#userEmail");
-    const phoneTextBox = page.locator("#userMobile");
-    const occupationDropdown = page.locator(".custom-select.ng-untouched.ng-pristine.ng-valid");
-    const genderMaleRadioBtn = page.locator("input[value='Male']");
-    const userPasswordTextBox = page.locator("#userPassword");
-    const confirmPasswordTextBox = page.locator("#confirmPassword");
-    const eighteenPlusCheckbox = page.locator("input[type='checkbox']");
-    const signUpBtn = page.locator("#signUpBtn");
+    const registerFirstNameTextBox = page.getByRole('textbox', { name: 'First Name' });
+    const registerLastNameTextBox = page.getByRole('textbox', { name: 'Last Name' });
+    const emailTextBox = page.getByRole('textbox', { name: 'email@example.com' });
+    const phoneTextBox = page.getByRole('textbox', { name: 'enter your number' });
+    const occupationDropdown = page.getByRole('combobox');
+    const genderMaleRadioBtn = page.getByRole('radio', { name: 'Male', exact: true });
+    const registerUserPasswordTextBox = page.getByRole('textbox', { name: 'Passsword' });
+    const confirmPasswordTextBox = page.getByRole('textbox', { name: 'Confirm Password' });
+    const eighteenPlusCheckbox = page.getByRole('checkbox');
+    const signUpBtn = page.getByRole('button', { name: 'Register' });
+    const loginBtn = page.getByRole('button', { name: 'Login' });
+    const loginEmailTextBox = page.getByRole('textbox', { name: 'Email' });
+    const loginPasswordTextBox = page.getByRole('textbox', { name: 'enter your passsword' });
+    const cardTitles = page.locator(".card-body b");
 
     //Go to registration page and fill the form, submit form
     await page.goto(loginPage);
-    await expect(page).locator("h1[class='title'] em").textContent("Rahul Shetty Academy");
     await registerLink.click();
-    await firstNameTextBox.fill("TestFirstName");
-    await lastNameTextBox.fill("TestLastName");
-    await emailTextBox.fill(`testuser${Date.now()}@test.com`);
-    await phoneTextBox.fill("0123456789");  
+    await registerFirstNameTextBox.fill("FirstName");
+    await registerLastNameTextBox.fill("LastName");
+    await emailTextBox.fill(userEmail);
+    await phoneTextBox.fill("1123456789");  
     await occupationDropdown.selectOption("Engineer");
     await genderMaleRadioBtn.check();
-    await userPasswordTextBox.fill("TestPassword123!");
+    await registerUserPasswordTextBox.fill("TestPassword123!");
     await confirmPasswordTextBox.fill("TestPassword123!");
     await eighteenPlusCheckbox.check();
     await signUpBtn.click();
-    await page.pause();
+    await loginBtn.click();
 
-    //Landing page for products list, locate first product title and return it
-    // const firstProductTitle = page.locator(".card-body b").first();
-    // await expect(firstProductTitle).toBeVisible();
-    // console.log("First product title is: " + await firstProductTitle.textContent());
-
+    //Login, locate first product title and return it
+    await loginEmailTextBox.fill(userEmail);
+    await loginPasswordTextBox.fill("TestPassword123!");
+    await loginBtn.click();
+    await cardTitles.first().waitFor();
+    const firstProductTitle = await cardTitles.first().textContent();
+    console.log(firstProductTitle);
     
 });
