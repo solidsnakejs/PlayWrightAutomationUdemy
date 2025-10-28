@@ -2,6 +2,7 @@
 import { defineConfig } from '@playwright/test';
 
 const config = ({
+  // projects: [{}],
   testDir: './tests',
   timeout: 30 * 1000,
   expect: {
